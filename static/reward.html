@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <title>提取成功</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+
+            width: 100%;
+            height: 100%;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "PingFang SC",
+                "Microsoft YaHei",
+                sans-serif;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,.08),
+                    rgba(255,255,255,.12)
+                ),
+                url("/static/images/group.png");
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
+        }
+
+
+        .success-card {
+
+            width: min(100%, 390px);
+
+            padding: 32px 22px;
+
+            border-radius: 25px;
+
+            background:
+                rgba(255,255,255,.88);
+
+            box-shadow:
+                0 18px 50px
+                rgba(0,0,0,.18);
+
+            text-align: center;
+
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+
+        .success-title {
+
+            margin: 0 0 8px;
+
+            color: #573c53;
+
+            font-size: 27px;
+
+            font-weight: 800;
+        }
+
+
+        .success-subtitle {
+
+            margin: 0 0 22px;
+
+            color: #896f83;
+
+            font-size: 14px;
+        }
+
+
+        .result-box {
+
+            padding: 20px 15px;
+
+            border-radius: 18px;
+
+            background: #fff0f8;
+
+            border:
+                1px solid #f1d5e6;
+        }
+
+
+        .result-label {
+
+            color: #967489;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .result-id {
+
+            color: #c64c98;
+
+            font-size: 31px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            word-break: break-all;
+        }
+
+
+        .result-message {
+
+            min-height: 22px;
+
+            margin-top: 15px;
+
+            color: #856d7e;
+
+            font-size: 13px;
+        }
+
+
+        .result-id-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.copy-button {
+    padding: 4px 9px;
+    border: none;
+    border-radius: 8px;
+    background: #f3d7e9;
+    color: #a34880;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform .1s ease;
+}
+
+.copy-button:active {
+    transform: scale(.95);
+}
+
+.back-button {
+
+            width: 100%;
+
+            height: 48px;
+
+            margin-top: 18px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #d86eb0;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .back-button:active {
+
+            transform: scale(.98);
+        }
+
+
+        @media (max-width: 480px) {
+
+            body {
+                padding: 14px;
+            }
+
+            .success-card {
+                padding:
+                    28px
+                    18px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .result-id {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="success-card">
+
+    <h1 class="success-title">
+        提取成功
+    </h1>
+
+    <p class="success-subtitle">
+        你的钻享已发放，请及时去游戏里吃噢
+    </p>
+
+
+    <div class="result-box">
+
+        <div class="result-id-row">
+
+            <div
+                id="resultId"
+                class="result-id"
+            >
+                正在获取...
+            </div>
+
+            <button
+                id="copyButton"
+                class="copy-button"
+                onclick="copyRewardId()"
+            >
+                复制
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="back-button"
+        onclick="goBack()"
+    >
+        返回钻享中心
+    </button>
+
+</div>
+
+
+<script>
+
+    // =====================================================
+    // 获取提取结果
+    // =====================================================
+
+    async function loadResult() {
+
+        const idElement =
+            document.getElementById("resultId");
+
+        try {
+
+            const response = await fetch(
+                "/api/reward/result",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+            /*
+                如果没有登录，
+                或 Session 不存在，
+                直接回首页。
+            */
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                window.location.href = "/";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                idElement.textContent =
+                    "获取失败";
+
+                return;
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                idElement.textContent =
+                    "获取失败";
+
+                return;
+            }
+
+
+            /*
+                显示：
+
+                #312766755
+            */
+
+            idElement.textContent =
+                "#" + data.id;
+
+        } catch (error) {
+
+            idElement.textContent =
+                "获取失败";
+
+        }
+    }
+
+
+    // =====================================================
+    // 复制提取编号
+    // =====================================================
+
+    async function copyRewardId() {
+
+        const idElement =
+            document.getElementById("resultId");
+
+        const copyButton =
+            document.getElementById("copyButton");
+
+        if (!idElement || !copyButton) {
+            return;
+        }
+
+        const rewardId =
+            idElement.textContent.trim();
+
+        if (
+            !rewardId ||
+            rewardId === "正在获取..." ||
+            rewardId === "获取失败"
+        ) {
+            return;
+        }
+
+        try {
+
+            if (
+                navigator.clipboard &&
+                window.isSecureContext
+            ) {
+                await navigator.clipboard.writeText(
+                    rewardId
+                );
+            } else {
+
+                const textarea =
+                    document.createElement("textarea");
+
+                textarea.value = rewardId;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+
+                document.body.appendChild(textarea);
+
+                textarea.focus();
+                textarea.select();
+
+                document.execCommand("copy");
+
+                textarea.remove();
+            }
+
+            copyButton.textContent = "已复制";
+
+            setTimeout(() => {
+                copyButton.textContent = "复制";
+            }, 1500);
+
+        } catch (error) {
+
+            console.error(
+                "复制编号失败：",
+                error
+            );
+
+            copyButton.textContent = "复制失败";
+
+            setTimeout(() => {
+                copyButton.textContent = "复制";
+            }, 1500);
+        }
+    }
+
+
+    // =====================================================
+    // 返回
+    // =====================================================
+
+    function goBack() {
+
+        window.location.href = "/";
+    }
+
+
+    // =====================================================
+    // 页面加载
+    // =====================================================
+
+    loadResult();
+
+</script>
+
+</body>
+</html>

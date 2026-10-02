@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>钻享中心</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "PingFang SC",
+                "Microsoft YaHei",
+                sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* =================================================
+           登录页面
+        ================================================= */
+
+        #loginPage {
+            width: 100%;
+            height: 100vh;
+
+            background-image:
+                linear-gradient(
+                    rgba(255, 255, 255, .08),
+                    rgba(255, 255, 255, .12)
+                ),
+                url("/static/images/girl.png");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .login-card {
+            width: min(90%, 360px);
+
+            padding: 32px 25px;
+
+            background: rgba(255, 255, 255, .55);
+
+            border: 1px solid rgba(255, 255, 255, .7);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 15px 45px rgba(0, 0, 0, .18);
+
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+
+            text-align: center;
+        }
+
+        .login-title {
+            margin: 0 0 8px;
+
+            font-size: 28px;
+            font-weight: 700;
+
+            color: #40253d;
+        }
+
+        .login-subtitle {
+            margin: 0 0 25px;
+
+            color: #704d69;
+
+            font-size: 14px;
+        }
+
+        .login-input {
+            width: 100%;
+            height: 48px;
+
+            padding: 0 16px;
+
+            border: 1px solid rgba(120, 80, 120, .2);
+
+            border-radius: 13px;
+
+            background: rgba(255, 255, 255, .72);
+
+            outline: none;
+
+            color: #493442;
+        }
+
+        .login-input:focus {
+            border-color: rgba(200, 110, 160, .7);
+        }
+
+        .login-button {
+            width: 100%;
+            height: 48px;
+
+            margin-top: 28px;
+
+            border: none;
+            border-radius: 13px;
+
+            background: #d97bb4;
+
+            color: white;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .login-button:active {
+            transform: scale(.98);
+        }
+
+        .login-message {
+            min-height: 20px;
+
+            margin-top: 12px;
+
+            font-size: 13px;
+
+            color: #c24f68;
+        }
+
+
+        /* =================================================
+           钻享中心
+        ================================================= */
+
+        #accountPage {
+            position: relative;
+
+            width: 100%;
+            height: 100vh;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            display: none;
+
+            padding: 22px 16px 40px;
+        }
+
+        .account-desserts {
+            position: fixed;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-image: url("/static/images/desserts.png");
+
+            background-repeat: repeat;
+
+            background-position: top left;
+
+            background-size: auto;
+
+            opacity: .88;
+
+            z-index: 0;
+        }
+
+        .account-content {
+            position: relative;
+
+            z-index: 1;
+
+            width: min(100%, 430px);
+
+            margin: 0 auto;
+        }
+
+        .account-title {
+            text-align: center;
+
+            margin: 4px 0 18px;
+
+            color: #b94f91;
+
+            font-size: 27px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            text-shadow:
+                0 2px 8px rgba(255, 255, 255, .95),
+                0 1px 2px rgba(185, 79, 145, .25);
+        }
+
+        /*
+            girl2 放到账户 div 里面作为背景
+        */
+
+        .account-card {
+            position: relative;
+            width: 100%;
+            min-height: 570px;
+            padding: 205px 20px 25px;
+            border-radius: 26px;
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    rgba(255, 240, 250, .48),
+                    rgba(235, 220, 250, .38)
+                );
+
+            background-color: rgba(255, 245, 252, .46);
+
+            border: 1px solid rgba(255, 255, 255, .72);
+
+            box-shadow:
+                0 18px 45px rgba(150, 90, 140, .18),
+                inset 0 1px 0 rgba(255, 255, 255, .85);
+
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .girl2-image {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+
+            width: auto;
+            height: 175px;
+
+            max-width: none;
+
+            z-index: 0;
+
+            object-fit: contain;
+
+            filter: none;
+        }
+
+        .account-info {
+            padding: 22px 18px;
+
+            border-radius: 20px;
+
+            background: rgba(255, 255, 255, .91);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .12);
+                
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome {
+            text-align: center;
+
+            color: #55344c;
+
+            font-size: 16px;
+
+            margin-bottom: 15px;
+        }
+
+        .diamond-box {
+            text-align: center;
+
+            padding: 18px 10px;
+
+            border-radius: 17px;
+
+            background: #fff1fa;
+        }
+
+        .diamond-label {
+            color: #8a637e;
+
+            font-size: 13px;
+        }
+
+        .diamond-count {
+            margin-top: 5px;
+
+            color: #c34e9b;
+
+            font-size: 38px;
+
+            line-height: 1;
+
+            font-weight: 800;
+        }
+
+        .claim-button {
+            width: 100%;
+
+            height: 52px;
+
+            margin-top: 18px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background: #d86eb0;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 7px 18px rgba(216, 110, 176, .3);
+        }
+
+        .claim-button:active {
+            transform: scale(.98);
+        }
+
+        .claim-button:disabled {
+            opacity: .55;
+
+            cursor: not-allowed;
+        }
+
+        .logout-button {
+            width: 100%;
+
+            height: 42px;
+
+            margin-top: 10px;
+
+            border: 1px solid #e3cadc;
+
+            border-radius: 13px;
+
+            background: rgba(255, 255, 255, .8);
+
+            color: #8b617d;
+
+            cursor: pointer;
+        }
+
+        .claim-message {
+            min-height: 22px;
+
+            margin-top: 13px;
+
+            text-align: center;
+
+            color: #b54d75;
+
+            font-size: 13px;
+        }
+
+
+        /* =================================================
+           手机端
+        ================================================= */
+
+        @media (max-width: 480px) {
+
+            #loginPage {
+                padding: 15px;
+            }
+
+            .login-card {
+                padding: 28px 20px;
+            }
+
+            .login-title {
+                font-size: 25px;
+            }
+
+            #accountPage {
+                padding:
+                    15px
+                    12px
+                    35px;
+            }
+
+            .account-title {
+                font-size: 22px;
+            }
+
+            .account-card {
+                min-height: 520px;
+
+                padding:
+                195px
+                    14px
+                    18px;
+
+                background-size:
+                    100% 100%,
+                    auto 150px;
+            }
+
+            .account-info {
+                padding: 18px 14px;
+            }
+
+            .diamond-count {
+                font-size: 34px;
+            }
+        }
+    
+.claim-actions {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.claim-actions #claimMessage {
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.claim-actions .claim-button,
+.claim-actions .logout-button {
+    margin: 0;
+}
+
+
+/* =====================================================
+   提取钻享确认弹窗
+   ===================================================== */
+
+.claim-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.claim-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.claim-modal-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(40, 20, 35, .35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.claim-modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(88%, 340px);
+    padding: 28px 22px 22px;
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            rgba(255, 248, 253, .96),
+            rgba(247, 235, 250, .94)
+        );
+
+    border: 1px solid rgba(255, 255, 255, .85);
+
+    box-shadow:
+        0 20px 50px rgba(100, 55, 90, .25);
+
+    text-align: center;
+}
+
+.claim-modal-title {
+    color: #b94f91;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.claim-modal-tip {
+    color: #8a637e;
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 22px;
+}
+
+.claim-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.claim-modal-actions button {
+    flex: 1;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.claim-modal-cancel {
+    color: #8a637e;
+    background: rgba(255, 255, 255, .75);
+    border: 1px solid rgba(190, 150, 180, .45);
+}
+
+.claim-modal-confirm {
+    color: #fff;
+    background: #d86eb0;
+    border: 1px solid #d86eb0;
+}
+
+
+.claim-records-link {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    text-align: center;
+    color: #b94f91;
+    font-size: 13px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+
+.claim-records-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.claim-records-modal.show {
+    display: flex;
+}
+
+.claim-records-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(40, 20, 40, .25);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.claim-records-card {
+    position: relative;
+    z-index: 1;
+    width: min(88%, 360px);
+    padding: 24px 22px 20px;
+    border-radius: 22px;
+    background: rgba(255, 250, 253, .96);
+    box-shadow: 0 18px 50px rgba(80, 40, 80, .22);
+}
+
+.claim-records-title {
+    text-align: center;
+    color: #b94f91;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.claim-records-list {
+    min-height: 80px;
+    color: #765d70;
+    font-size: 14px;
+}
+
+.claim-record-item {
+    padding: 11px 12px;
+    margin-bottom: 9px;
+    border-radius: 12px;
+    background: #fff5fb;
+    border: 1px solid rgba(195, 78, 155, .10);
+}
+
+.claim-record-item:last-child {
+    margin-bottom: 0;
+}
+
+.claim-record-diamond {
+    color: #b94f91;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.claim-record-time {
+    margin-top: 4px;
+    color: #8a7483;
+    font-size: 12px;
+}
+
+.claim-records-close {
+    display: block;
+    margin: 18px auto 0;
+    padding: 8px 26px;
+    border: none;
+    border-radius: 20px;
+    background: #f3d7e9;
+    color: #a34880;
+    cursor: pointer;
+}
+
+
+.claim-records-note {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin: 10px 0 8px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     登录页面
+===================================================== -->
+
+<div id="loginPage">
+
+    <div class="login-card">
+
+        <h1 class="login-title">
+            钻享中心
+        </h1>
+
+        <p class="login-subtitle">
+            登录后即可提取钻享
+        </p>
+
+        <input
+            id="usernameInput"
+            class="login-input"
+            type="text"
+            placeholder="请输入用户名"
+            autocomplete="off"
+        >
+
+        <button
+            id="loginButton"
+            class="login-button"
+            onclick="login()"
+        >
+            登录
+        </button>
+
+        <div
+            id="loginMessage"
+            class="login-message"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     钻享中心
+===================================================== -->
+
+<div id="accountPage">
+
+    <div class="account-desserts"></div>
+
+    <div class="account-content">
+
+        <h1 class="account-title">
+            💎 钻享中心
+        </h1>
+
+        <div class="account-card">
+            <img class="girl2-image" src="/static/images/girl2.png" alt="">
+
+            <div class="account-info">
+
+                <div
+                    id="welcomeText"
+                    class="welcome"
+                >
+                    欢迎回来
+                </div>
+
+                <div class="diamond-box">
+
+                    <div class="diamond-label">
+                        当前钻享余额
+                    </div>
+
+                    <div
+                        id="diamondCount"
+                        class="diamond-count"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+                <div class="claim-actions">
+
+                <button
+                    id="claimButton"
+                    class="claim-button"
+                    onclick="openClaimModal()"
+                >
+                    提取钻享
+                </button>
+
+                <div
+                    id="claimMessage"
+                    class="claim-message"
+                ></div>
+
+                <button
+                    class="logout-button"
+                    onclick="logout()"
+                >
+                    退出登录
+                </button>
+
+                </div>
+
+            </div>
+
+            <div class="claim-records-link" onclick="openClaimRecords()">
+                钻享记录
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div id="claimRecordsModal" class="claim-records-modal">
+
+    <div
+        class="claim-records-mask"
+        onclick="closeClaimRecords()"
+    ></div>
+
+    <div class="claim-records-card">
+
+        <div class="claim-records-title">
+            💎 钻享记录
+        </div>
+
+        <div id="claimRecordsList" class="claim-records-list">
+            暂无钻享记录
+        </div>
+
+        <div class="claim-records-note">
+            仅显示最近三条记录
+        </div>
+
+        <button
+            class="claim-records-close"
+            onclick="closeClaimRecords()"
+        >
+            关闭
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+
+async function openClaimRecords() {
+    const modal = document.getElementById("claimRecordsModal");
+    const list = document.getElementById("claimRecordsList");
+
+    if (!modal || !list) {
+        return;
+    }
+
+    modal.classList.add("show");
+
+    list.innerHTML = "正在加载……";
+
+    try {
+        const response = await fetch("/api/reward/records");
+        const result = await response.json();
+
+        if (!result.success) {
+            list.innerHTML = result.message || "获取记录失败";
+            return;
+        }
+
+        if (!result.records || result.records.length === 0) {
+            list.innerHTML = "暂无钻享记录";
+            return;
+        }
+
+        list.innerHTML = result.records.map(record => {
+            let timeText = record.claimed_at || "";
+
+            if (timeText) {
+                const parts = timeText.split(" ");
+                if (parts.length === 2) {
+                    const date = parts[0].split("-");
+                    const time = parts[1];
+
+                    if (date.length === 3) {
+                        timeText =
+                            `${date[0]}年${date[1]}月${date[2]}日 ${time}`;
+                    }
+                }
+            }
+
+            return `
+                <div class="claim-record-item">
+                    <div class="claim-record-diamond">
+                        #${record.external_id || "暂无编号"}
+                    </div>
+                    <div class="claim-record-time">
+                        ${timeText}
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+    } catch (error) {
+        console.error("获取钻享记录失败：", error);
+        list.innerHTML = "获取记录失败，请稍后再试";
+    }
+}
+function closeClaimRecords() {
+    const modal = document.getElementById("claimRecordsModal");
+
+    if (modal) {
+        modal.classList.remove("show");
+    }
+}
+
+    let currentUsername = "";
+
+
+    // =====================================================
+    // 页面初始化
+    // =====================================================
+
+    window.addEventListener("DOMContentLoaded", async () => {
+
+        try {
+
+            const response = await fetch("/api/me", {
+                credentials: "same-origin"
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                return;
+            }
+
+            showAccountPage(
+                data.username,
+                data.diamonds
+            );
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    });
+
+
+    // =====================================================
+    // 登录
+    // =====================================================
+
+    async function login() {
+
+        const input =
+            document.getElementById("usernameInput");
+
+        const message =
+            document.getElementById("loginMessage");
+
+        const username =
+            input.value.trim();
+
+        message.textContent = "";
+
+        if (!username) {
+
+            message.textContent =
+                "请输入用户名";
+
+            return;
+        }
+
+        const button =
+            document.getElementById("loginButton");
+
+        button.disabled = true;
+
+        try {
+
+            const response = await fetch(
+                "/api/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials: "same-origin",
+
+                    body: JSON.stringify({
+                        username: username
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok || !data.success) {
+
+                message.textContent =
+                    data.message || "登录失败";
+
+                return;
+            }
+
+            showAccountPage(
+                data.username,
+                data.diamonds
+            );
+
+        } catch (error) {
+
+            message.textContent =
+                "网络异常，请稍后再试";
+
+        } finally {
+
+            button.disabled = false;
+        }
+    }
+
+
+    // =====================================================
+    // 显示钻享中心
+    // =====================================================
+
+    function showAccountPage(
+        username,
+        diamonds
+    ) {
+
+        currentUsername = username;
+
+        document.getElementById(
+            "loginPage"
+        ).style.display = "none";
+
+        document.getElementById(
+            "accountPage"
+        ).style.display = "block";
+
+        document.getElementById(
+            "welcomeText"
+        ).textContent =
+            `欢迎你，${username}`;
+
+        document.getElementById(
+            "diamondCount"
+        ).textContent =
+            diamonds;
+    }
+
+
+    // =====================================================
+    // 提取钻享
+    // =====================================================
+
+    async function claimReward() {
+
+        const button =
+            document.getElementById("claimButton");
+
+        const message =
+            document.getElementById("claimMessage");
+
+        message.textContent = "";
+
+        button.disabled = true;
+
+        button.textContent = "正在提取...";
+
+        try {
+
+            const response = await fetch(
+                "/api/reward/claim",
+                {
+                    method: "POST",
+
+                    credentials: "same-origin"
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok || !data.success) {
+
+                message.textContent =
+                    data.message || "提取失败";
+
+                return;
+            }
+
+            /*
+                后端已经：
+
+                1. 检查登录
+                2. 检查钻享
+                3. 调用固定卡密
+                4. 获取 ID
+                5. 扣除 1 钻享
+                6. 保存提取结果
+
+                现在直接进入成功页面。
+            */
+
+            window.location.href =
+                data.reward_url || "/reward.html";
+
+        } catch (error) {
+
+            message.textContent =
+                "网络异常，请稍后再试";
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "提取钻享";
+        }
+    }
+
+
+    // =====================================================
+    // 退出
+    // =====================================================
+
+    async function logout() {
+
+        try {
+
+            await fetch(
+                "/api/logout",
+                {
+                    method: "POST",
+                    credentials: "same-origin"
+                }
+            );
+
+        } finally {
+
+            window.location.href = "/";
+        }
+    }
+
+
+// =====================================================
+// 提取钻享确认弹窗
+// =====================================================
+
+function openClaimModal() {
+    const modal = document.getElementById("claimModal");
+
+    if (modal) {
+        modal.classList.add("show");
+    }
+}
+
+function closeClaimModal() {
+    const modal = document.getElementById("claimModal");
+
+    if (modal) {
+        modal.classList.remove("show");
+    }
+}
+
+function confirmClaim() {
+    closeClaimModal();
+    claimReward();
+}
+
+</script>
+
+
+<div id="claimModal" class="claim-modal">
+    <div class="claim-modal-mask" onclick="closeClaimModal()"></div>
+
+    <div class="claim-modal-card">
+
+        <div class="claim-modal-title">
+            确认提取钻享？
+        </div>
+
+        <div class="claim-modal-tip">
+            每次提取会自动发放100晶钻<br>
+            提前吃满上限不补噢
+        </div>
+
+        <div class="claim-modal-actions">
+
+            <button
+                class="claim-modal-cancel"
+                onclick="closeClaimModal()"
+            >
+                取消
+            </button>
+
+            <button
+                class="claim-modal-confirm"
+                onclick="confirmClaim()"
+            >
+                确认提取
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

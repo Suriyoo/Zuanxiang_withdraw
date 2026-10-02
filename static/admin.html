@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>钻享管理后台</title>
+
+<style>
+
+:root {
+    --bg: #07152e;
+
+    --panel: #0c2248;
+
+    --panel2: #102c59;
+
+    --line: rgba(82,170,255,.32);
+
+    --text: #fff;
+
+    --muted: #9fb9dd;
+
+    --blue: #25c9ff;
+
+    --purple: #825cff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 20% 0%,
+            rgba(37,103,195,.28),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 100%,
+            rgba(107,52,190,.25),
+            transparent 30%
+        ),
+        var(--bg);
+}
+
+/* 页面 */
+
+.page {
+    width: min(
+        1100px,
+        calc(100% - 28px)
+    );
+
+    margin: auto;
+
+    padding:
+        28px 0 40px;
+}
+
+/* 顶部 */
+
+.header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.logo {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5fe8ff,
+            #755cff
+        );
+
+    font-size: 24px;
+}
+
+.logo h1 {
+    margin: 0;
+
+    font-size: 23px;
+}
+
+.logo p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+/* 登录区域 */
+
+.login-card {
+    width: min(
+        430px,
+        100%
+    );
+
+    margin:
+        70px auto 0;
+
+    padding: 32px;
+
+    border:
+        1px solid var(--line);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16,45,88,.98),
+            rgba(8,27,59,.98)
+        );
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.35);
+}
+
+.login-title {
+    margin-bottom: 24px;
+}
+
+.login-title h2 {
+    margin: 0;
+
+    font-size: 23px;
+}
+
+.login-title p {
+    margin: 6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+/* 输入 */
+
+.field {
+    margin-bottom: 15px;
+}
+
+.field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #b7cce9;
+
+    font-size: 12px;
+}
+
+.input {
+    width: 100%;
+
+    height: 46px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid
+        rgba(85,169,255,.4);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    color: white;
+
+    background:
+        rgba(1,15,39,.7);
+
+    font-size: 14px;
+}
+
+.input::placeholder {
+    color: #718bad;
+}
+
+.input:focus {
+    border-color: #45d2ff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(55,195,255,.1);
+}
+
+/* 按钮 */
+
+.primary-btn {
+    width: 100%;
+
+    height: 46px;
+
+    border: 0;
+
+    border-radius: 999px;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--blue),
+            #556cff,
+            var(--purple)
+        );
+}
+
+.message {
+    min-height: 20px;
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    color: #ff9ca8;
+
+    font-size: 12px;
+}
+
+/* 后台 */
+
+.dashboard {
+    display: none;
+}
+
+.dashboard-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+.admin-name {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.logout-btn {
+    height: 38px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid
+        rgba(89,168,255,.4);
+
+    border-radius: 9px;
+
+    background:
+        rgba(42,84,140,.25);
+
+    color: #d7e9ff;
+
+    cursor: pointer;
+}
+
+/* 创建区域 */
+
+.create-card {
+    padding: 17px;
+
+    margin-bottom: 14px;
+
+    border:
+        1px solid var(--line);
+
+    border-radius: 16px;
+
+    background:
+        rgba(12,37,76,.9);
+}
+
+.create-title {
+    margin-bottom: 11px;
+
+    color: #c6d9f2;
+
+    font-size: 13px;
+}
+
+.create-bar {
+    display: grid;
+
+    grid-template-columns:
+        1fr 130px auto;
+
+    gap: 8px;
+}
+
+.create-bar .input {
+    height: 42px;
+}
+
+.create-btn {
+    height: 42px;
+
+    padding:
+        0 17px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    color: white;
+
+    background:
+        #16b899;
+
+    cursor: pointer;
+}
+
+/* 用户表 */
+
+.users-card {
+    overflow: hidden;
+
+    border:
+        1px solid var(--line);
+
+    border-radius: 16px;
+
+    background:
+        rgba(10,33,68,.94);
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 600px;
+}
+
+th,
+td {
+    padding:
+        13px 14px;
+
+    text-align: left;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.07);
+
+    font-size: 13px;
+}
+
+th {
+    color: #9fbbe0;
+
+    font-size: 12px;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+td {
+    color: #e5efff;
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+.badge {
+    display: inline-block;
+
+    padding:
+        4px 8px;
+
+    border-radius: 999px;
+
+    color: #a9d9ff;
+
+    background:
+        rgba(54,143,220,.12);
+
+    font-size: 11px;
+}
+
+.action-btn {
+    border: 0;
+
+    border-radius: 7px;
+
+    padding:
+        6px 9px;
+
+    margin-right: 4px;
+
+    cursor: pointer;
+
+    color: white;
+
+    font-size: 11px;
+}
+
+.edit {
+    background: #17b99c;
+}
+
+.delete {
+    background: #e74d62;
+}
+
+/* 提取记录 */
+
+.claims-card {
+    margin-top: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--line);
+    border-radius: 16px;
+
+    background: rgba(10,33,68,.94);
+}
+
+.claims-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 16px 16px 12px;
+}
+
+.claims-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 17px;
+}
+
+.claims-subtitle {
+    margin: 4px 0 0;
+    color: #8fa9cc;
+    font-size: 12px;
+}
+
+.claims-refresh {
+    border: 0;
+    border-radius: 8px;
+    padding: 7px 10px;
+    color: white;
+    background: #1677c8;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.claims-table-wrap {
+    overflow-x: auto;
+}
+
+.claims-table {
+    min-width: 0;
+    table-layout: fixed;
+}
+
+.claims-table th:nth-child(1),
+.claims-table td:nth-child(1) {
+    width: 28%;
+}
+
+.claims-table th:nth-child(2),
+.claims-table td:nth-child(2) {
+    width: 34%;
+}
+
+.claims-table th:nth-child(3),
+.claims-table td:nth-child(3) {
+    width: 38%;
+}
+
+.claim-code {
+    word-break: break-all;
+    font-family: monospace;
+    color: #d8e8ff;
+}
+
+.claim-time {
+    white-space: nowrap;
+    color: #9fbbe0;
+    font-size: 12px;
+}
+
+.claims-empty {
+    padding: 24px 12px;
+    text-align: center;
+    color: #7893b8;
+    font-size: 13px;
+}
+
+.claims-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 13px 12px 16px;
+}
+
+.claim-page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 9px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px;
+    color: #dceaff;
+    background: rgba(255,255,255,.04);
+    cursor: pointer;
+}
+
+.claim-page-btn:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+.claim-page-info {
+    min-width: 70px;
+    text-align: center;
+    color: #9fbbe0;
+    font-size: 12px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 手机 */
+
+@media (max-width: 700px) {
+
+    .page {
+        width:
+            calc(100% - 16px);
+
+        padding-top: 14px;
+    }
+
+    .header {
+        margin-bottom: 10px;
+    }
+
+    .logo h1 {
+        font-size: 20px;
+    }
+
+    .login-card {
+        margin-top: 45px;
+
+        padding:
+            24px 20px;
+    }
+
+    .dashboard-header {
+        align-items: flex-start;
+    }
+
+    .dashboard-header h2 {
+        font-size: 20px;
+    }
+
+    .create-bar {
+        grid-template-columns:
+            1fr 100px;
+    }
+
+    .create-btn {
+        grid-column:
+            1 / -1;
+
+        width: 100%;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- 顶部 -->
+
+    <header class="header">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                💎
+            </div>
+
+            <div>
+
+                <h1>
+                    钻享管理后台
+                </h1>
+
+                <p>
+                    用户与钻享额度管理
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==========================
+         管理员登录
+    =========================== -->
+
+    <section
+        id="loginCard"
+        class="login-card"
+    >
+
+        <div class="login-title">
+
+            <h2>
+                管理员登录
+            </h2>
+
+            <p>
+                请输入管理员账号和密码
+            </p>
+
+        </div>
+
+
+        <form id="loginForm">
+
+            <div class="field">
+
+                <label>
+                    管理员账号
+                </label>
+
+                <input
+                    id="adminUser"
+                    class="input"
+                    type="text"
+                    placeholder="请输入管理员账号"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    管理员密码
+                </label>
+
+                <input
+                    id="adminPassword"
+                    class="input"
+                    type="password"
+                    placeholder="请输入管理员密码"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                class="primary-btn"
+                type="submit"
+            >
+                登录管理后台
+            </button>
+
+
+            <div
+                id="loginMessage"
+                class="message"
+            ></div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ==========================
+         后台
+    =========================== -->
+
+    <section
+        id="dashboard"
+        class="dashboard"
+    >
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <h2>
+                    用户管理
+                </h2>
+
+                <div
+                    id="adminName"
+                    class="admin-name"
+                >
+                    管理员：
+                </div>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="logout-btn"
+            >
+                ↪ 退出登录
+            </button>
+
+        </div>
+
+
+        <!-- 创建用户 -->
+
+        <section class="create-card">
+
+            <div class="create-title">
+                创建新用户
+            </div>
+
+            <div class="create-bar">
+
+                <input
+                    id="newUsername"
+                    class="input"
+                    type="text"
+                    placeholder="新用户名"
+                >
+
+                <input
+                    id="newDiamonds"
+                    class="input"
+                    type="number"
+                    min="0"
+                    value="0"
+                    placeholder="初始钻享"
+                >
+
+                <button
+                    id="createBtn"
+                    class="create-btn"
+                >
+                    创建用户
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- 用户 -->
+
+        <section class="users-card">
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                用户名
+                            </th>
+
+                            <th>
+                                钻享
+                            </th>
+
+                            <th>
+                                类型
+                            </th>
+
+                            <th>
+                                操作
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="userTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <div
+            id="tableMessage"
+            class="message"
+        ></div>
+
+
+        <!-- 最近 7 天提取记录 -->
+
+        <section class="claims-card">
+
+            <div class="claims-header">
+
+                <div>
+                    <h3 class="claims-title">
+                        提取钻享记录
+                    </h3>
+                    <p class="claims-subtitle">
+                        最近 7 天，共显示 8 条 / 页
+                    </p>
+                </div>
+
+                <button
+                    id="claimsRefreshBtn"
+                    class="claims-refresh"
+                    type="button"
+                >
+                    刷新
+                </button>
+
+            </div>
+
+            <div class="claims-table-wrap">
+
+                <table class="claims-table">
+
+                    <thead>
+                        <tr>
+                            <th>用户</th>
+                            <th>提取码</th>
+                            <th>提取时间</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="claimsTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div
+                id="claimsEmpty"
+                class="claims-empty hidden"
+            >
+                最近 7 天暂无提取记录
+            </div>
+
+            <div
+                id="claimsPagination"
+                class="claims-pagination hidden"
+            >
+                <button
+                    id="claimsPrevBtn"
+                    class="claim-page-btn"
+                    type="button"
+                >
+                    ‹
+                </button>
+
+                <span
+                    id="claimsPageInfo"
+                    class="claim-page-info"
+                >
+                    1 / 1
+                </span>
+
+                <button
+                    id="claimsNextBtn"
+                    class="claim-page-btn"
+                    type="button"
+                >
+                    ›
+                </button>
+            </div>
+
+        </section>
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* ==========================
+   元素
+========================== */
+
+const loginCard =
+    document.getElementById(
+        "loginCard"
+    );
+
+const dashboard =
+    document.getElementById(
+        "dashboard"
+    );
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+const loginMessage =
+    document.getElementById(
+        "loginMessage"
+    );
+
+const tableMessage =
+    document.getElementById(
+        "tableMessage"
+    );
+
+const userTable =
+    document.getElementById(
+        "userTable"
+    );
+
+const adminName =
+    document.getElementById(
+        "adminName"
+    );
+
+
+/* ==========================
+   检查管理员登录
+========================== */
+
+async function checkAdmin() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/me"
+            );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        showDashboard(
+            data.username
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+}
+
+
+/* ==========================
+   显示后台
+========================== */
+
+function showDashboard(
+    username
+) {
+
+    loginCard.classList.add(
+        "hidden"
+    );
+
+    dashboard.style.display =
+        "block";
+
+    adminName.textContent =
+        "管理员：" + username;
+
+    loadUsers();
+    loadClaimRecords(1);
+}
+
+
+/* ==========================
+   登录
+========================== */
+
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        const username =
+            document
+                .getElementById(
+                    "adminUser"
+                )
+                .value
+                .trim();
+
+        const password =
+            document
+                .getElementById(
+                    "adminPassword"
+                )
+                .value;
+
+        loginMessage.textContent =
+            "正在登录...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username,
+                            password
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "登录失败"
+                );
+            }
+
+            showDashboard(
+                data.username ||
+                username
+            );
+
+            loginMessage.textContent =
+                "";
+
+        } catch (error) {
+
+            loginMessage.textContent =
+                error.message;
+        }
+    }
+);
+
+
+/* ==========================
+   用户列表
+========================== */
+
+async function loadUsers() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/users"
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "获取用户失败"
+            );
+        }
+
+        userTable.innerHTML = "";
+
+        data.users.forEach(
+            user => {
+
+                const tr =
+                    document.createElement(
+                        "tr"
+                    );
+
+                const username =
+                    escapeHtml(
+                        user.username
+                    );
+
+                tr.innerHTML = `
+
+                    <td>
+                        ${username}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${user.diamonds}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        <span class="badge">
+                            ${
+                                user.is_admin
+                                ? "管理员"
+                                : "普通用户"
+                            }
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            user.is_admin
+
+                            ? "—"
+
+                            : `
+
+                                <button
+                                    class="action-btn edit"
+                                    onclick="editUser(
+                                        '${encodeURIComponent(user.username)}',
+                                        ${user.diamonds}
+                                    )"
+                                >
+                                    修改钻享
+                                </button>
+
+                                <button
+                                    class="action-btn delete"
+                                    onclick="deleteUser(
+                                        '${encodeURIComponent(user.username)}'
+                                    )"
+                                >
+                                    删除
+                                </button>
+
+                            `
+                        }
+
+                    </td>
+                `;
+
+                userTable.appendChild(tr);
+            }
+        );
+
+    } catch (error) {
+
+        tableMessage.textContent =
+            error.message;
+    }
+}
+
+
+/* ==========================
+   提取记录
+========================== */
+
+let claimsCurrentPage = 1;
+
+async function loadClaimRecords(page = 1) {
+
+    const claimsTable =
+        document.getElementById("claimsTable");
+
+    const claimsEmpty =
+        document.getElementById("claimsEmpty");
+
+    const claimsPagination =
+        document.getElementById("claimsPagination");
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/reward-claims?page=${page}`
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail ||
+                data.message ||
+                "获取提取记录失败"
+            );
+        }
+
+        claimsCurrentPage = data.page;
+
+        claimsTable.innerHTML = "";
+
+        if (!data.records.length) {
+            claimsEmpty.classList.remove("hidden");
+            claimsPagination.classList.add("hidden");
+            return;
+        }
+
+        claimsEmpty.classList.add("hidden");
+
+        data.records.forEach(record => {
+
+            const tr =
+                document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>${escapeHtml(record.username)}</td>
+                <td class="claim-code">${escapeHtml(record.reward_code)}</td>
+                <td class="claim-time">${escapeHtml(record.created_at)}</td>
+            `;
+
+            claimsTable.appendChild(tr);
+        });
+
+        claimsPagination.classList.remove("hidden");
+
+        document.getElementById(
+            "claimsPageInfo"
+        ).textContent =
+            `${data.page} / ${data.total_pages}`;
+
+        document.getElementById(
+            "claimsPrevBtn"
+        ).disabled = data.page <= 1;
+
+        document.getElementById(
+            "claimsNextBtn"
+        ).disabled = data.page >= data.total_pages;
+
+    } catch (error) {
+
+        claimsTable.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align:center;color:#e58b98;padding:22px;">
+                    ${escapeHtml(error.message)}
+                </td>
+            </tr>
+        `;
+
+        claimsEmpty.classList.add("hidden");
+        claimsPagination.classList.add("hidden");
+    }
+}
+
+
+document
+    .getElementById("claimsRefreshBtn")
+    .addEventListener("click", () => {
+        loadClaimRecords(claimsCurrentPage);
+    });
+
+
+document
+    .getElementById("claimsPrevBtn")
+    .addEventListener("click", () => {
+        if (claimsCurrentPage > 1) {
+            loadClaimRecords(claimsCurrentPage - 1);
+        }
+    });
+
+
+document
+    .getElementById("claimsNextBtn")
+    .addEventListener("click", async () => {
+        const response = await fetch(
+            `/api/admin/reward-claims?page=${claimsCurrentPage + 1}`
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data.success && claimsCurrentPage < data.total_pages) {
+            loadClaimRecords(claimsCurrentPage + 1);
+        }
+    });
+
+
+/* ==========================
+   创建用户
+========================== */
+
+document
+    .getElementById("createBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const username =
+                document
+                    .getElementById(
+                        "newUsername"
+                    )
+                    .value
+                    .trim();
+
+            const diamonds =
+                Number(
+                    document
+                        .getElementById(
+                            "newDiamonds"
+                        )
+                        .value
+                );
+
+            if (!username) {
+
+                tableMessage.textContent =
+                    "请输入用户名";
+
+                return;
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/admin/users",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                username,
+                                diamonds
+                            })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "创建失败"
+                    );
+                }
+
+                document
+                    .getElementById(
+                        "newUsername"
+                    )
+                    .value = "";
+
+                document
+                    .getElementById(
+                        "newDiamonds"
+                    )
+                    .value = "0";
+
+                tableMessage.textContent =
+                    "用户创建成功";
+
+                await loadUsers();
+
+            } catch (error) {
+
+                tableMessage.textContent =
+                    error.message;
+            }
+        }
+    );
+
+
+/* ==========================
+   修改钻享
+========================== */
+
+async function editUser(
+    encodedUsername,
+    currentDiamonds
+) {
+
+    const username =
+        decodeURIComponent(
+            encodedUsername
+        );
+
+    const value =
+        prompt(
+            `请输入 ${username} 的钻享数量：`,
+            currentDiamonds
+        );
+
+    if (value === null) {
+        return;
+    }
+
+    const diamonds =
+        Number(value);
+
+    if (
+        !Number.isInteger(diamonds) ||
+        diamonds < 0
+    ) {
+
+        alert(
+            "钻享数量必须是大于等于 0 的整数"
+        );
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/users/${encodeURIComponent(username)}/diamonds`,
+                {
+                    method: "PATCH",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        diamonds
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "修改失败"
+            );
+        }
+
+        await loadUsers();
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
+
+/* ==========================
+   删除用户
+========================== */
+
+async function deleteUser(
+    encodedUsername
+) {
+
+    const username =
+        decodeURIComponent(
+            encodedUsername
+        );
+
+    if (
+        !confirm(
+            `确定删除用户「${username}」吗？`
+        )
+    ) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/users/${encodeURIComponent(username)}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "删除失败"
+            );
+        }
+
+        await loadUsers();
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
+
+/* ==========================
+   退出
+========================== */
+
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await fetch(
+                "/api/admin/logout",
+                {
+                    method: "POST"
+                }
+            );
+
+            window.location.reload();
+        }
+    );
+
+
+/* ==========================
+   HTML 转义
+========================== */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>
