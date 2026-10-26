@@ -1119,6 +1119,7 @@ loginForm.addEventListener(
             if (!response.ok) {
 
                 throw new Error(
+                    data.message ||
                     data.detail ||
                     "登录失败"
                 );

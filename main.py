@@ -22,7 +22,7 @@ app = FastAPI(title="钻享中心")
 # 基础配置
 # =========================================================
 
-AOBI_EXTRACT_URL = "http://8.130.43.77/admin/api/extract_id.php"
+AOBI_EXTRACT_URL = os.getenv("AOBI_EXTRACT_URL", "").strip()
 
 # 固定卡密：
 # 推荐通过：
@@ -30,15 +30,15 @@ AOBI_EXTRACT_URL = "http://8.130.43.77/admin/api/extract_id.php"
 AOBI_KM = os.getenv("AOBI_KM", "").strip()
 
 # 备用提取接口
-AOBI_BACKUP_EXTRACT_URL = "http://106.54.193.245:5000/extract_auth_code"
+AOBI_BACKUP_EXTRACT_URL = os.getenv("AOBI_BACKUP_EXTRACT_URL", "").strip()
 
 AOBI_BACKUP_CARD_CODE = os.getenv(
     "AOBI_BACKUP_CARD_CODE",
     ""
 ).strip()
 
-# 登录 session 有效时间：8 小时
-SESSION_TTL = 8 * 60 * 60
+# 登录 session 有效时间：30 天
+SESSION_TTL = 30 * 24 * 60 * 60
 
 
 # =========================================================
@@ -661,6 +661,7 @@ async def reward_records(request: Request):
             FROM claim_records
             WHERE user_id = ?
             ORDER BY id DESC
+            LIMIT 3
             """,
             (user_id,)
         ).fetchall()
@@ -688,10 +689,20 @@ async def reward_records(request: Request):
 # 管理员登录
 # =========================================================
 
+ADMIN_USERNAME = os.getenv(
+    "ADMIN_USERNAME",
+    "admin"
+)
+
 ADMIN_PASSWORD = os.getenv(
     "ADMIN_PASSWORD",
-    "ChangeMe123!"
-)
+    ""
+).strip()
+
+# 管理员登录失败限制
+ADMIN_LOGIN_MAX_FAILURES = 5
+ADMIN_LOGIN_LOCK_SECONDS = 600
+admin_login_failures = {}
 
 
 @app.post("/api/admin/login")
@@ -707,21 +718,72 @@ async def admin_login(request: Request):
             status_code=400
         )
 
+    username = str(data.get("username", "")).strip()
     password = str(data.get("password", ""))
 
-    if password != ADMIN_PASSWORD:
+    if not ADMIN_PASSWORD:
         return JSONResponse(
             {
                 "success": False,
-                "message": "密码错误"
+                "message": "管理员密码尚未配置，请联系管理员"
+            },
+            status_code=503
+        )
+
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+
+    failure_info = admin_login_failures.get(client_ip)
+
+    if failure_info:
+        failed_count = failure_info.get("count", 0)
+        locked_until = failure_info.get("locked_until", 0)
+
+        if locked_until > now:
+            remaining = int(locked_until - now) + 1
+
+            return JSONResponse(
+                {
+                    "success": False,
+                    "message": f"登录失败次数过多，请 {remaining} 秒后再试"
+                },
+                status_code=429
+            )
+
+    if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+        failure_info = admin_login_failures.get(
+            client_ip,
+            {
+                "count": 0,
+                "locked_until": 0
+            }
+        )
+
+        failure_info["count"] += 1
+
+        if failure_info["count"] >= ADMIN_LOGIN_MAX_FAILURES:
+            failure_info["locked_until"] = (
+                now + ADMIN_LOGIN_LOCK_SECONDS
+            )
+
+        admin_login_failures[client_ip] = failure_info
+
+        return JSONResponse(
+            {
+                "success": False,
+                "message": "用户名或密码错误"
             },
             status_code=401
         )
 
+    # 登录成功后清除该 IP 的失败记录
+    admin_login_failures.pop(client_ip, None)
+
     token = secrets.token_urlsafe(32)
 
     admin_sessions[token] = {
-        "created_at": time.time()
+        "created_at": time.time(),
+        "username": username
     }
 
     response = JSONResponse({
@@ -769,8 +831,12 @@ async def admin_me(request: Request):
             status_code=401
         )
 
+    token = request.cookies.get("admin_session")
+    session = admin_sessions.get(token)
+
     return {
-        "success": True
+        "success": True,
+        "username": session["username"]
     }
 
 

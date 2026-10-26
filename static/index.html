@@ -834,7 +834,9 @@ async function openClaimRecords() {
             return;
         }
 
-        list.innerHTML = result.records.map(record => {
+        list.innerHTML = "";
+
+        result.records.forEach(record => {
             let timeText = record.claimed_at || "";
 
             if (timeText) {
@@ -850,17 +852,22 @@ async function openClaimRecords() {
                 }
             }
 
-            return `
-                <div class="claim-record-item">
-                    <div class="claim-record-diamond">
-                        #${record.external_id || "暂无编号"}
-                    </div>
-                    <div class="claim-record-time">
-                        ${timeText}
-                    </div>
-                </div>
-            `;
-        }).join("");
+            const item = document.createElement("div");
+            item.className = "claim-record-item";
+
+            const diamond = document.createElement("div");
+            diamond.className = "claim-record-diamond";
+            diamond.textContent =
+                "#" + (record.external_id || "暂无编号");
+
+            const time = document.createElement("div");
+            time.className = "claim-record-time";
+            time.textContent = timeText;
+
+            item.appendChild(diamond);
+            item.appendChild(time);
+            list.appendChild(item);
+        });
 
     } catch (error) {
         console.error("获取钻享记录失败：", error);
